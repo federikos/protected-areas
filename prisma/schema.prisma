@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ProtectedArea {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique @db.VarChar(255)
+  published  Boolean  @default(true)
+  region     String   @db.VarChar(255)
+  district   String   @db.VarChar(255)
+  latitude   Float    @db.DoublePrecision
+  longitude  Float    @db.DoublePrecision
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  reserveType ReserveType? @relation(fields: [reserveTypeId], references: [id])
+  reserveTypeId Int?
+  significance Significance? @relation(fields: [significanceId], references: [id])
+  significanceId Int?
+  naturalMonumentType NaturalMonumentType? @relation(fields: [naturalMonumentTypeId], references: [id])
+  naturalMonumentTypeId Int?
+  internationalStatus InternationalStatus? @relation(fields: [internationalStatusId], references: [id])
+  internationalStatusId Int?
+}
+
+model Category {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  categoryColor  String          @db.VarChar(7)
+  protectedAreas ProtectedArea[]
+}
+
+model ReserveType {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String @db.VarChar(7)
+  protectedAreas ProtectedArea[]
+}
+
+model Significance {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String @db.VarChar(7)
+  protectedAreas ProtectedArea[]
+}
+
+model NaturalMonumentType {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String @db.VarChar(7)
+  protectedAreas ProtectedArea[]
+}
+
+model InternationalStatus {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String @db.VarChar(7)
+  protectedAreas ProtectedArea[]
+}
