@@ -8,28 +8,37 @@ datasource db {
 }
 
 model ProtectedArea {
-  id                    Int                  @id @default(autoincrement())
-  name                  String               @unique @db.VarChar(255)
-  published             Boolean              @default(true)
-  region                String               @db.VarChar(255)
-  district              String               @db.VarChar(255)
-  latitude              Float                @db.DoublePrecision
-  longitude             Float                @db.DoublePrecision
-  category              Category             @relation(fields: [categoryId], references: [id])
-  categoryId            Int
-  reserveType           ReserveType?         @relation(fields: [reserveTypeId], references: [id])
-  reserveTypeId         Int?
-  significance          Significance?        @relation(fields: [significanceId], references: [id])
-  significanceId        Int?
-  naturalMonumentType   NaturalMonumentType? @relation(fields: [naturalMonumentTypeId], references: [id])
-  naturalMonumentTypeId Int?
-  internationalStatusList   InternationalStatus[]
+  id                            Int                          @id @default(autoincrement())
+  name                          String                       @unique @db.VarChar(255)
+  published                     Boolean                      @default(true)
+  region                        String                       @db.VarChar(255)
+  district                      String                       @db.VarChar(255)
+  latitude                      Float                        @db.DoublePrecision
+  longitude                     Float                        @db.DoublePrecision
+  category                      Category                     @relation(fields: [categoryId], references: [id])
+  categoryId                    Int
+  reserveSignificance           ReserveSignificance?         @relation(fields: [reserveSignificanceId], references: [id])
+  reserveSignificanceId         Int?
+  reserveType                   ReserveType?                 @relation(fields: [reserveTypeId], references: [id])
+  reserveTypeId                 Int?
+  naturalMonumentSignificance   NaturalMonumentSignificance? @relation(fields: [naturalMonumentSignificanceId], references: [id])
+  naturalMonumentSignificanceId Int?
+  naturalMonumentType           NaturalMonumentType?         @relation(fields: [naturalMonumentTypeId], references: [id])
+  naturalMonumentTypeId         Int?
+  internationalStatusList       InternationalStatus[]
 }
 
 model Category {
   id             Int             @id @default(autoincrement())
   name           String          @unique
-  color          String          @db.VarChar(7)
+  color          String?         @db.VarChar(7)
+  protectedAreas ProtectedArea[]
+}
+
+model ReserveSignificance {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  color          String?         @db.VarChar(7)
   protectedAreas ProtectedArea[]
 }
 
@@ -40,9 +49,10 @@ model ReserveType {
   protectedAreas ProtectedArea[]
 }
 
-model Significance {
+model NaturalMonumentSignificance {
   id             Int             @id @default(autoincrement())
   name           String          @unique
+  //TODO: Consider removing the color column
   color          String          @db.VarChar(7)
   protectedAreas ProtectedArea[]
 }
@@ -54,9 +64,13 @@ model NaturalMonumentType {
   protectedAreas ProtectedArea[]
 }
 
+//TODO: Consider adding the NaturalMonumentSubType model (клюквенник, валун, камень)
+//with Icons
+
 model InternationalStatus {
   id             Int             @id @default(autoincrement())
   name           String          @unique
   description    String?         @db.Text
+  //TODO: Consider adding the Icon column here
   protectedAreas ProtectedArea[]
 }
