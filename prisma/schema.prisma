@@ -23,8 +23,7 @@ model ProtectedArea {
   significanceId        Int?
   naturalMonumentType   NaturalMonumentType? @relation(fields: [naturalMonumentTypeId], references: [id])
   naturalMonumentTypeId Int?
-  internationalStatus   InternationalStatus? @relation(fields: [internationalStatusId], references: [id])
-  internationalStatusId Int?
+  internationalStatusList   InternationalStatus[]
 }
 
 model Category {
@@ -58,6 +57,6 @@ model NaturalMonumentType {
 model InternationalStatus {
   id             Int             @id @default(autoincrement())
   name           String          @unique
-  color          String          @db.VarChar(7)
+  description    String?         @db.Text
   protectedAreas ProtectedArea[]
 }
