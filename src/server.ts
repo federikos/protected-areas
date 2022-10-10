@@ -1,10 +1,16 @@
 import { ApolloServer } from 'apollo-server'
+import {
+  ApolloServerPluginLandingPageLocalDefault 
+} from "apollo-server-core"
 import { schema } from './schema'
 import { context } from './context'
 
 const server = new ApolloServer({
   schema: schema,
   context: context,
+  plugins: [
+      ApolloServerPluginLandingPageLocalDefault({ footer: false, embed: true })
+  ],
 })
 
 server.listen(process.env.PORT || 4000).then(async ({ url }) => {
