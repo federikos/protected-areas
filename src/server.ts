@@ -11,6 +11,9 @@ const server = new ApolloServer({
   plugins: [
       ApolloServerPluginLandingPageLocalDefault({ footer: false, embed: true })
   ],
+  //TODO: disable introspection in production!
+  //introspection: process.env.NODE_ENV !== 'production'
+  introspection: true,
 })
 
 server.listen(process.env.PORT || 4000).then(async ({ url }) => {
