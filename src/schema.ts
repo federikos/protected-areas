@@ -11,34 +11,34 @@ import {
 } from 'nexus'
 import { DateTimeResolver } from 'graphql-scalars'
 import { context, Context } from './context'
-import { Prisma } from '@prisma/client'
+import { InternationalStatus, Prisma, Significance } from '@prisma/client'
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date')
 
 const Query = objectType({
   name: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('allProtectedAreas', {
-      type: ProtectedArea,
+    t.nonNull.list.nonNull.field('allMapObjects', {
+      type: MapObject,
       resolve: (_parent, _args, context: Context) => {
-        return context.prisma.protectedArea.findMany()
+        return context.prisma.mapObject.findMany()
       },
     })
 
-    t.nullable.field('protectedAreaById', {
-      type: ProtectedArea,
+    t.nullable.field('mapObjectById', {
+      type: MapObject,
       args: {
         id: intArg(),
       },
       resolve: (_parent, args, context: Context) => {
-        return context.prisma.protectedArea.findUnique({
+        return context.prisma.mapObject.findUnique({
           where: { id: args.id || undefined },
         })
       },
     })
 
     t.nonNull.list.nonNull.field('feed', {
-      type: ProtectedArea,
+      type: MapObject,
       args: {
         searchString: stringArg(),
         skip: intArg(),
@@ -54,7 +54,7 @@ const Query = objectType({
             }
           : {}
 
-        return context.prisma.protectedArea.findMany({
+        return context.prisma.mapObject.findMany({
           where: {
             published: true,
             ...or,
@@ -86,11 +86,14 @@ const Query = objectType({
   },
 })
 
-const ProtectedArea = objectType({
-  name: 'ProtectedArea',
+const MapObject = objectType({
+  name: 'MapObject',
   definition(t) {
     t.nonNull.int('id')
     t.string('name')
+    t.date('createdAt')
+    t.date('updatedAt')
+    t.string('description')
     t.boolean('published')
     t.string('region')
     t.string('district')
@@ -99,7 +102,7 @@ const ProtectedArea = objectType({
     t.field('category', {
       type: Category,
       resolve: (parent, _, context: Context) => {
-        return context.prisma.protectedArea.findUnique({
+        return context.prisma.mapObject.findUnique({
           where: { id: parent.id || undefined }
         })
         .category()
@@ -115,10 +118,18 @@ const Category = objectType({
     t.nonNull.int('id')
     t.string('name')
     t.string('color')
-    t.list.field('protectedAreas', {
-      type: ProtectedArea,
+    t.field('categoryType', {
+      type: CategoryType,
+      resolve: (parent, _args, context: Context) => {
+        return context.prisma.categoryType.findUnique({
+          where: {id: parent.id || undefined }
+        })
+      }
+    })
+    t.list.field('mapObjects', {
+      type: MapObject,
       resolve: (parent, _, context: Context) => {
-        return context.prisma.protectedArea.findMany({
+        return context.prisma.mapObject.findMany({
           where: { id: parent.id || undefined}
         })
       }
@@ -126,11 +137,29 @@ const Category = objectType({
   },
 })
 
+const CategoryType = objectType({
+  name: 'CategoryType',
+  definition(t) {
+    t.nonNull.int('id')
+    t.string('name')
+    t.field('category', {
+      type: Category
+    })
+    t.string('reserveSignificance')
+    t.string('reserveType')
+    t.string('naturalMonumentSignificance')
+    t.string('naturalMonumentType')
+    t.list.string('internationalStatusList')
+    t.typeName
+  },
+})
+
 export const schema = makeSchema({
   types: [
     Query,
-    ProtectedArea,
+    MapObject,
     Category,
+    CategoryType,
     // Mutation,
     DateTime,
   ],

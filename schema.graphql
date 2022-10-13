@@ -3,10 +3,22 @@
 
 
 type Category {
+  categoryType: CategoryType
   color: String
   id: Int!
+  mapObjects: [MapObject]
   name: String
-  protectedAreas: [ProtectedArea]
+}
+
+type CategoryType {
+  category: Category
+  id: Int!
+  internationalStatusList: [String]
+  name: String
+  naturalMonumentSignificance: String
+  naturalMonumentType: String
+  reserveSignificance: String
+  reserveType: String
 }
 
 """
@@ -14,9 +26,11 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-type ProtectedArea {
+type MapObject {
   category: Category
   categoryId: Int!
+  createdAt: DateTime
+  description: String
   district: String
   id: Int!
   latitude: Float
@@ -24,12 +38,13 @@ type ProtectedArea {
   name: String
   published: Boolean
   region: String
+  updatedAt: DateTime
 }
 
 type Query {
   allCategories: [Category!]!
-  allProtectedAreas: [ProtectedArea!]!
+  allMapObjects: [MapObject!]!
   categoryById(id: Int): Category
-  feed(searchString: String, skip: Int, take: Int): [ProtectedArea!]!
-  protectedAreaById(id: Int): ProtectedArea
+  feed(searchString: String, skip: Int, take: Int): [MapObject!]!
+  mapObjectById(id: Int): MapObject
 }

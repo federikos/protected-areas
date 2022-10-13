@@ -7,70 +7,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ProtectedArea {
-  id                            Int                          @id @default(autoincrement())
-  name                          String                       @unique @db.VarChar(255)
-  published                     Boolean                      @default(true)
-  region                        String                       @db.VarChar(255)
-  district                      String                       @db.VarChar(255)
-  latitude                      Float                        @db.DoublePrecision
-  longitude                     Float                        @db.DoublePrecision
-  category                      Category                     @relation(fields: [categoryId], references: [id])
-  categoryId                    Int
-  reserveSignificance           ReserveSignificance?         @relation(fields: [reserveSignificanceId], references: [id])
-  reserveSignificanceId         Int?
-  reserveType                   ReserveType?                 @relation(fields: [reserveTypeId], references: [id])
-  reserveTypeId                 Int?
-  naturalMonumentSignificance   NaturalMonumentSignificance? @relation(fields: [naturalMonumentSignificanceId], references: [id])
-  naturalMonumentSignificanceId Int?
-  naturalMonumentType           NaturalMonumentType?         @relation(fields: [naturalMonumentTypeId], references: [id])
-  naturalMonumentTypeId         Int?
-  internationalStatusList       InternationalStatus[]
+model MapObject {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt
+  published   Boolean  @default(true)
+  region      String   @db.VarChar(255)
+  district    String   @db.VarChar(255)
+  latitude    Float?   @db.DoublePrecision
+  longitude   Float?   @db.DoublePrecision
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int
 }
 
 model Category {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique
-  color          String?         @db.VarChar(7)
-  protectedAreas ProtectedArea[]
+  id             Int          @id @default(autoincrement())
+  name           String
+  color          String?      @db.VarChar(7)
+  categoryType   CategoryType @relation(fields: [categoryTypeId], references: [id])
+  categoryTypeId Int          @unique
+  protectedAreas MapObject[]
 }
 
-model ReserveSignificance {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique
-  color          String?         @db.VarChar(7)
-  protectedAreas ProtectedArea[]
+model CategoryType {
+  id                          Int                   @id @default(autoincrement())
+  name                        String
+  category                    Category?
+  reserveSignificance         Significance?
+  reserveType                 ReserveType?
+  naturalMonumentSignificance Significance?
+  naturalMonumentType         NaturalMonumentType?
+  internationalStatusList     InternationalStatus[]
 }
 
-model ReserveType {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique
-  color          String          @db.VarChar(7)
-  protectedAreas ProtectedArea[]
+enum Significance {
+  REPUBLICAN
+  LOCAL
 }
 
-model NaturalMonumentSignificance {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique
-  //TODO: Consider removing the color column
-  color          String          @db.VarChar(7)
-  protectedAreas ProtectedArea[]
+enum ReserveType {
+  LANDSCAPE
+  BIOLOGICAL
+  GIDROLOGICAL
+  WATERLAND
 }
 
-model NaturalMonumentType {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique
-  color          String          @db.VarChar(7)
-  protectedAreas ProtectedArea[]
+enum NaturalMonumentType {
+  BOTANICAL
+  GEOLOGICAL
+  GIDROLOGICAL
 }
 
 //TODO: Consider adding the NaturalMonumentSubType model (клюквенник, валун, камень)
 //with Icons
 
-model InternationalStatus {
-  id             Int             @id @default(autoincrement())
-  name           String          @unique
-  description    String?         @db.Text
-  //TODO: Consider adding the Icon column here
-  protectedAreas ProtectedArea[]
+enum InternationalStatus {
+  WORLD_HERITAGE_SITE
+  UNESCO_BIOSPHERE_RESERVE
+  EUROPEAN_DIPLOMA_OF_PROTECTED_AREAS
+  RAMSAR_SITE
+  IMPORTANT_BIRD_AREA
+  IMPORTANT_PLANT_AREA
 }
