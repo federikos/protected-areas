@@ -29,7 +29,7 @@ scalar DateTime
 type MapObject {
   category: Category
   categoryId: Int!
-  createdAt: DateTime
+  createdAt: DateTime!
   description: String
   district: String
   id: Int!
@@ -38,7 +38,7 @@ type MapObject {
   name: String
   published: Boolean
   region: String
-  updatedAt: DateTime
+  updatedAt: DateTime!
 }
 
 type Query {

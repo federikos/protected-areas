@@ -91,8 +91,8 @@ const MapObject = objectType({
   definition(t) {
     t.nonNull.int('id')
     t.string('name')
-    t.date('createdAt')
-    t.date('updatedAt')
+    t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.string('description')
     t.boolean('published')
     t.string('region')
